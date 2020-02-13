@@ -500,25 +500,7 @@ void init() {
   //
   // see: wlen.cpp: wcof_init function also
   //
-  switch(WLEN_MODEL) {
-    case LSE:
-      // 10 !!!
-      wcof00.x = wcof00.y = 0.1;
-      break;
-
-    case WA:
-      if(INPUT_FLG == ISPD05 || INPUT_FLG == ISPD06 || INPUT_FLG == ISPD ||
-         INPUT_FLG == MMS || INPUT_FLG == SB || INPUT_FLG == ETC) {
-
-        // 8 !!!
-        wcof00.x = wcof00.y = 0.125;
-      }
-      else if(INPUT_FLG == IBM) {
-        // 2 !!!
-        wcof00.x = wcof00.y = 0.50;
-      }
-      break;
-  }
+  wcof00.x = wcof00.y = 0.125; 
 
   SetMAX_EXP_wlen();
 

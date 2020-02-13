@@ -1023,18 +1023,22 @@ void bin_update7_cGP2D() {
   }
 
   prec sum_ovf_area = 0;
-  //#pragma omp parallel \
-    default(none) \
-    shared(tier, sum_ovf_area, gsum_phi, target_cell_den) \
-    private(i)
-  //    {
-  //        BIN *bp = NULL;
-  //#pragma omp for
+
+  float minElectroForce = 1e30;
+  float maxElectroForce = -1e30;
+
   for(i = 0; i < tier->tot_bin_cnt; i++) {
     bp = &tier->bin_mat[i];
 
     copy_e_from_fft_2D(&(bp->e), bp->p);
     copy_phi_from_fft_2D(&(bp->phi), bp->p);
+
+    minElectroForce = std::min(minElectroForce, bp->e.x);
+    minElectroForce = std::min(minElectroForce, bp->e.y);
+
+
+    maxElectroForce = std::max(maxElectroForce, bp->e.x);
+    maxElectroForce = std::max(maxElectroForce, bp->e.y);
 
     gsum_phi += bp->phi * bp->cell_area + bp->phi * bp->cell_area2 +
                 bp->phi * bp->term_area + bp->phi * bp->virt_area;
@@ -1050,6 +1054,9 @@ void bin_update7_cGP2D() {
 
     sum_ovf_area += max((prec)0.0, bp->den2 - target_cell_den) * tier->bin_area;
   }
+
+  cout << "minElectroForce: " << minElectroForce << endl;
+  cout << "maxElectroForce: " << maxElectroForce << endl;
 
   if(timeon) {
     time_end(&time);

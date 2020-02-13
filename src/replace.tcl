@@ -47,7 +47,7 @@ proc global_placement { args } {
 
   if { [ord::db_has_rows] } {
     # Unfortunately this does not really turn off the noise. -cherry
-    $rep set_verbose_level 0
+    $rep set_verbose_level 5
     # Don't shit all over the file system
     $rep set_output /dev/null
 

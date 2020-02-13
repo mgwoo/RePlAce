@@ -339,6 +339,8 @@ void myNesterov::InitializationCellStatus() {
 
 void myNesterov::InitializationCoefficients() {
 
+  cout << "BaseWireLengthCoef: " << base_wcof.x << endl;
+
   if(STAGE == mGP3D) {
     opt_phi_cof = sum_wgrad / sum_pgrad * INIT_LAMBDA_COF_GP;
     opt_w_cof = 0;
@@ -553,6 +555,8 @@ int myNesterov::DoNesterovOptimization(Timing::Timing &TimingInst) {
   for(i = 0; i < max_iter; i++) {
     if(timeon)
       time_start(&time);
+  
+    cout << "Iter: " << i+1 << endl;  
 
     if(isTrial == false && isRoutability == true &&
        isRoutabilityInit == false) {
@@ -629,10 +633,14 @@ int myNesterov::DoNesterovOptimization(Timing::Timing &TimingInst) {
     a = (1.0 + sqrt(4.0 * a * a + 1.0)) * 0.5;
     cof = (ab - 1.0) / a;
 
+    cout << "  PreviousA: " << ab << endl;
+    cout << "  CurrentA: " << a << endl;
+    cout << "  Coefficient: " << cof << endl;
+
     alpha_pred = it->alpha00;
     backtrack_cnt = 0;
 
-    // cout <<"alpha_pred: " <<alpha_pred <<endl;
+    cout << "  StepLength: " <<alpha_pred <<endl;
     // cout <<"cof: " <<cof <<endl;
     // int cnt = 0;
     if(timeon) {
@@ -712,6 +720,7 @@ int myNesterov::DoNesterovOptimization(Timing::Timing &TimingInst) {
       }
 
       alpha_new = it0.alpha00;
+      cout << "  NewStepLength: " << alpha_new << endl;
 
       if(alpha_new > alpha_pred * 0.95 || backtrack_cnt >= MAX_BKTRK_CNT) {
         alpha_pred = alpha_new;
@@ -722,6 +731,8 @@ int myNesterov::DoNesterovOptimization(Timing::Timing &TimingInst) {
         alpha_pred = alpha_new;
       }
     }
+
+    cout << "  NumBackTrak: " << backtrack_cnt << endl;
 
     UpdateNesterovOptStatus();
     UpdateNesterovIter(i + 1, it, &iter_st[i]);
@@ -978,6 +989,11 @@ void getCostFuncGradient2(struct FPOS *dst, struct FPOS *wdst,
 
   //    if(timeon) { time_start(&time); }
 
+  float wlenGradSum = 0;
+  float denGradSum = 0;
+  float dstSum = 0;
+
+  cout << "  DensityPenalty: " << opt_phi_cof << endl;
   int i = 0;
 #pragma omp parallel default(none) private(i)                              \
     shared(N, cellLambdaArr, gcell_st, dampParam, STAGE, pdstl, dst, wdst, \
@@ -990,6 +1006,7 @@ void getCostFuncGradient2(struct FPOS *dst, struct FPOS *wdst,
     FPOS wpre;
     FPOS charge_dpre;
     FPOS pre;
+
 
 #pragma omp for
     for(i = 0; i < N; i++) {
@@ -1036,6 +1053,8 @@ void getCostFuncGradient2(struct FPOS *dst, struct FPOS *wdst,
       dst[i].x = wgrad.x + opt_phi_cof * pgrad.x;
       dst[i].y = wgrad.y + opt_phi_cof * pgrad.y;
 
+     
+
       if(lambda2CMD == true) {
         pdstl[i] = pgradl;
         dst[i].x += cellLambdaArr[i] * pgradl.x;
@@ -1061,10 +1080,17 @@ void getCostFuncGradient2(struct FPOS *dst, struct FPOS *wdst,
 
       dst[i].x /= pre.x;
       dst[i].y /= pre.y;
+
+      wlenGradSum += fabs(wdst[i].x) + fabs(wdst[i].y);
+      denGradSum += fabs(pdst[i].x) + fabs(pdst[i].y);
+      dstSum += fabs(dst[i].x) + fabs(dst[i].y);
     }
   }
-  //    if(timeon) { time_end(&time);cout << "!!: " << time << endl;}
-  //    exit(1);
+
+  cout << "  WireLengthGradSum: " << wlenGradSum << endl;
+  cout << "  DensityGradSum: " << denGradSum << endl;
+  cout << "  GradSum: " << dstSum << endl;
+
 }
 void getCostFuncGradient2_DEN_ONLY_PRECON(struct FPOS *dst, struct FPOS *wdst,
                                           struct FPOS *pdst, struct FPOS *pdstl,
@@ -1443,6 +1469,13 @@ void myNesterov::UpdateNesterovIter(int iter, struct ITER *it,
   time_calc(last_it->cpu_curr, &it->cpu_curr, &it->cpu_cost);
   PrintNesterovOptStatus(iter);
   fflush(stdout);
+  cout << "  Gradient: " << it->grad << endl;
+  cout << "  Phi: " << it->potn << endl;
+  cout << "  Overflow: " << it->ovfl << endl;
+  cout << "  NewWireLengthCoef: " << wlen_cof.x << endl;
+  cout << "  PreviousHPWL: " << last_it->tot_hpwl * GetUnitX()  << endl;
+  cout << "  NewHPWL: " << it->tot_hpwl * GetUnitX()<< endl;
+  cout << "  PhiCoef: " << it->pcof << endl << endl << endl; 
 }
 
 void get_lc(struct FPOS *y_st, struct FPOS *y_dst, struct FPOS *z_st,
@@ -1466,7 +1499,9 @@ void get_lc3(struct FPOS *y_st, struct FPOS *y_dst, struct FPOS *z_st,
 
   lc = yz_dnm / yz_dis;
   // cout <<"N: " <<N <<endl;
-  // cout <<"yz_dnm/yz_dis: " <<yz_dnm <<", " <<yz_dis <<endl;
+  cout << "  CoordinateDistance: " << yz_dis << endl;
+  cout << "  GradientDistance: " << yz_dnm << endl;
+
   alpha = 1.0 / lc;
   iter->lc = lc;
   // if (alpha < 1) alpha = 1;
@@ -1643,6 +1678,7 @@ void myNesterov::PrintNesterovOptStatus(int iter) {
     } 
   }
   else if ( gVerbose >= 2 ) {
+    /*
     printf("\n");
     printf("ITER: %d\n", iter);
     printf("    HPWL=%.6f\n", it->tot_hpwl);
@@ -1660,6 +1696,8 @@ void myNesterov::PrintNesterovOptStatus(int iter) {
     printf("    GRAD=%.6E\n", it->grad);
     printf("    NuBT=%d\n", backtrack_cnt);
     printf("    CPU =%.6f\n", it->cpu_cost);
+    */
+
   }
 }
 
