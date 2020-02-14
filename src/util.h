@@ -65,6 +65,7 @@ void PrintProcBegin(std::string input, int verbose = 0);
 void PrintProcEnd(std::string input, int verbose = 0);
 void PrintError(std::string input, int verbose = 0); 
 void PrintInfoInt(std::string input, int val, int verbose = 0);
+void PrintInfoIntPair(std::string input, int val1, int val2, int verbose = 0);
 void PrintInfoPrec(std::string input, prec val, int verbose = 0);
 void PrintInfoPrecSignificant(std::string input, prec val, int verbose = 0);
 void PrintInfoPrecPair(std::string input, prec val1, prec val2, int verbose = 0);

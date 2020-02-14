@@ -263,8 +263,8 @@ void whitespace_init(void) {
 //  printf("INFO:  Chip Area: %lf x %lf = %lf \n", place.cnt.x, place.cnt.y, place.area);
 //  fflush(stdout);
 
-  PrintInfoPrec("TotalPlaceArea", total_PL_area);
-  PrintInfoPrec("TotalFixedArea", total_termPL_area);
+  PrintInfoPrec("CoreArea", total_PL_area);
+  PrintInfoPrec("NonPlaceInstsArea", total_termPL_area);
   PrintInfoPrec("TotalWhiteSpaceArea", total_WS_area);
   PrintInfoPrec("TotalPlaceMacrosArea", total_macro_area);
   PrintInfoPrec("TotalPlaceStdCellsArea", total_std_area); 
@@ -1260,9 +1260,9 @@ void get_mms_3d_dim(FPOS *tier_min, FPOS *tier_max, int *tier_row_cnt) {
   prec ylen = grow_pmax.y - grow_pmin.y;
   prec aspect_ratio = (prec)ylen / (prec)xlen;
 
-  PrintInfoPrec("AspectRatio", aspect_ratio);
-  PrintInfoPrecPair("RowMinXY", grow_pmin.x, grow_pmin.y);
-  PrintInfoPrecPair("RowMaxXY", grow_pmax.x, grow_pmax.y);
+//  PrintInfoPrec("AspectRatio", aspect_ratio);
+//  PrintInfoPrecPair("RowMinXY", grow_pmin.x, grow_pmin.y);
+//  PrintInfoPrecPair("RowMaxXY", grow_pmax.x, grow_pmax.y);
 //  PrintInfoPrecPair("TerminalMinXY", terminal_pmin.x, terminal_pmin.y);
 //  PrintInfoPrecPair("TerminalMaxXY", terminal_pmax.x, terminal_pmax.y);
 
@@ -1455,8 +1455,8 @@ void post_read_3d(void) {
     }
   }
 
-  PrintInfoInt("NumPlaceStdCells", placementStdcellCNT);
-  PrintInfoInt("NumPlaceMacros", placementMacroCNT);
+//  PrintInfoInt("NumPlaceStdCells", placementStdcellCNT);
+//  PrintInfoInt("NumPlaceMacros", placementMacroCNT);
 
   gmov_mac_cnt = placementMacroCNT;
 
@@ -1541,8 +1541,8 @@ void post_read_3d(void) {
     place_backup_st[i] = place_st[i];
   }
 
-  PrintInfoPrecPair( "RowSize", SITE_SPA, rowHeight );
-  PrintInfoInt( "NumRows", row_cnt );
+//  PrintInfoPrecPair( "RowSize", SITE_SPA, rowHeight );
+//  PrintInfoInt( "NumRows", row_cnt );
 
   // global variable 'place' update
   place.stp.x = SITE_SPA;
@@ -1563,21 +1563,6 @@ void post_read_3d(void) {
 
     total_PL_area += curPlace->area;
   }
-
-  // global min & global max variable setting
-  gmin = place.org;
-  gmax = place.end;
-
-  for(int i = 0; i < terminalCNT; i++) {
-    curTerminal = &terminalInstance[i];
-
-    gmin.x = min(gmin.x, curTerminal->pmin.x);
-    gmin.y = min(gmin.y, curTerminal->pmin.y);
-
-    gmax.x = max(gmax.x, curTerminal->pmax.x);
-    gmax.y = max(gmax.y, curTerminal->pmax.y);
-  }
-
 
   /*
   // setting additional margin
@@ -1608,11 +1593,11 @@ void post_read_3d(void) {
       gmax.y = place.end.y + max_mg;
   */
 
-  PrintInfoPrecPair("GlobalAreaLxLy", gmin.x, gmin.y);
-  PrintInfoPrecPair("GlobalAreaUxUy", gmax.x, gmax.y);
+  PrintInfoIntPair("DieAreaLxLy", gmin.x, gmin.y);
+  PrintInfoIntPair("DieAreaUxUy", gmax.x, gmax.y);
 
-  PrintInfoPrecPair("PlaceAreaLxLy", place.org.x, place.org.y);
-  PrintInfoPrecPair("PlaceAreaUxUy", place.end.x, place.end.y);
+  PrintInfoIntPair("CoreAreaLxLy", place.org.x, place.org.y);
+  PrintInfoIntPair("CoreAreaUxUy", place.end.x, place.end.y);
 
   place.cnt.x = place.end.x - place.org.x;
   place.cnt.y = place.end.y - place.org.y;

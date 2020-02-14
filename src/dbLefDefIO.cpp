@@ -61,7 +61,7 @@ void FillReplaceStructures(dbDatabase* db) {
   dbSet<dbInst> insts = block->getInsts();
   dbSet<dbInst>::iterator iitr;
  
-  PrintProcBegin("Filling Replace Structure");
+//  PrintProcBegin("Filling Replace Structure");
 
   // initialize module and terminal
   moduleCNT = terminalCNT = 0; 
@@ -87,8 +87,21 @@ void FillReplaceStructures(dbDatabase* db) {
   FillReplaceTerm(insts, bterms);
   FillReplaceNet(nets);
   FillReplaceRow(rows);  
+  PrintInfoInt("NumInstances", moduleCNT + terminalCNT - bterms.size());
+  PrintInfoInt("NumPlaceInstances", moduleCNT);
+  PrintInfoInt("NumFixedInstances", terminalCNT - bterms.size());
   GenerateDummyCellDb(rows);  
   FillReplaceNewRow(rows);  
+  
+  PrintInfoInt("NumNets", netCNT);
+  PrintInfoInt("NumPins", pinCNT);
+
+  gmin.x = block->getBBox()->xMin();
+  gmin.y = block->getBBox()->yMin();
+  
+  gmax.x = block->getBBox()->xMax();
+  gmax.y = block->getBBox()->yMax();
+
 
   FPOS tier_min, tier_max;
   int tier_row_cnt = 0;
@@ -97,7 +110,7 @@ void FillReplaceStructures(dbDatabase* db) {
   transform_3d(&tier_min, &tier_max, tier_row_cnt);
   post_read_3d();
 
-  PrintProcEnd("Filling Replace Structure");
+//  PrintProcEnd("Filling Replace Structure");
 }
 
 // update
@@ -118,7 +131,7 @@ void FillReplaceParameter(dbDatabase* db) {
 
   dbTech* tech = db->getTech();
   SetDefDbu( tech->getDbUnitsPerMicron() );
-  PrintInfoInt( "DEF DBU", GetDefDbu());
+  PrintInfoInt( "DBU", GetDefDbu());
 
 
   // extract arbitrary row height
@@ -128,31 +141,38 @@ void FillReplaceParameter(dbDatabase* db) {
 
   adsRect rowRect;
   firstRow->getBBox( rowRect );
-  PrintInfoPrec("RowHeight", rowRect.dy() );
+  PrintInfoIntPair("SiteSize", firstRow->getSite()->getWidth(), 
+      firstRow->getSite()->getHeight());
 
-  SetUnitY( 1.0 * rowRect.dy() / 9.0f );
-  SetUnitX( GetUnitY() );
+//  SetUnitY( 1.0 * rowRect.dy() / 9.0f );
+//  SetUnitX( GetUnitY() );
+  
+  SetUnitY( 1.0 );
+  SetUnitX( 1.0 );
 
-  PrintInfoPrec("ScaleDownUnit", GetUnitY());
+//  PrintInfoPrec("ScaleDownUnit", GetUnitY());
   
   // Extract CoreArea from ROWS definition
   adsRect coreArea = GetCoreFromDb(rows);
 
-  PrintInfoPrecPair("CoreAreaLxLy", coreArea.xMin(), coreArea.yMin());
-  PrintInfoPrecPair("CoreAreaUxUy", coreArea.xMax(), coreArea.yMax());
+  PrintInfoIntPair("CoreAreaLxLy", coreArea.xMin(), coreArea.yMin());
+  PrintInfoIntPair("CoreAreaUxUy", coreArea.xMax(), coreArea.yMax());
   
   int coreLx = INT_CONVERT(coreArea.xMin());
-  SetOffsetX( (coreLx % rowRect.dy() == 0)?
-      0 : rowRect.dy() - (coreLx % rowRect.dy()) );
+//  SetOffsetX( (coreLx % rowRect.dy() == 0)?
+//      0 : rowRect.dy() - (coreLx % rowRect.dy()) );
 
   int coreLy = INT_CONVERT(coreArea.yMin());
-  SetOffsetY( (coreLy % rowRect.dy() == 0)?
-      0 : rowRect.dy() - (coreLy % rowRect.dy()) );
+//  SetOffsetY( (coreLy % rowRect.dy() == 0)?
+//      0 : rowRect.dy() - (coreLy % rowRect.dy()) );
 
-  PrintInfoPrecPair("OffsetCoordi", GetOffsetX(), GetOffsetY());
+  SetOffsetX(0);
+  SetOffsetY(0);
+
+//  PrintInfoPrecPair("OffsetCoordi", GetOffsetX(), GetOffsetY());
   
   rowHeight =  GetScaleDownSize( rowRect.dy() ) ;
-  PrintInfoPrec("ScaleDownRowHeight", rowHeight );
+//  PrintInfoPrec("ScaleDownRowHeight", rowHeight );
 
 }
 
@@ -202,7 +222,6 @@ void FillReplaceModule(dbSet<dbInst> &insts) {
   }
 
   assert( i == moduleCNT );
-  PrintInfoInt("Modules", moduleCNT);
 }
 
 // update
@@ -277,11 +296,9 @@ void FillReplaceTerm(dbSet<dbInst> &insts, dbSet<dbBTerm> &bterms) {
   } 
 
   assert(i == terminalCNT);
-  PrintInfoInt("Terminals", terminalCNT);
 }
 
 void FillReplaceNet(dbSet<dbNet> &nets) {
-  PrintProcBegin("Generate Nets");
  
   pinCNT = 0;
   netCNT = nets.size();
@@ -306,13 +323,13 @@ void FillReplaceNet(dbSet<dbNet> &nets) {
     dbSigType nType = curDnet->getSigType();
     if( nType == dbSigType::GROUND ||
         nType == dbSigType::POWER ||
-        nType == dbSigType::CLOCK ||
         nType == dbSigType::RESET ) {
       continue;
     } 
 
     // Skip for empty nets
     if( curDnet->getBTerms().size() + curDnet->getITerms().size() == 0 ) {
+      cout << "Escaped" << endl;
       continue;
     }
 
@@ -429,9 +446,6 @@ void FillReplaceNet(dbSet<dbNet> &nets) {
   netCNT = netIdx;
   pinCNT = pinIdx;
 
-  PrintInfoInt("NumNets", netCNT);
-  PrintInfoInt("NumPins", pinCNT);
-  PrintProcEnd("Generate Nets");
 }
 
 void FillReplaceRow(dbSet<dbRow> &rows) {
@@ -461,7 +475,7 @@ void FillReplaceRow(dbSet<dbRow> &rows) {
 }
 // update rowHeight
 void FillReplaceNewRow(dbSet<dbRow> &rows) {
-  PrintProcBegin("Generate Rows");
+//  PrintProcBegin("Generate Rows");
 
   // get coreArea 
   adsRect coreArea = GetCoreFromDb(rows);
@@ -506,9 +520,9 @@ void FillReplaceNewRow(dbSet<dbRow> &rows) {
     curRow->x_cnt = rowCntX;
     curRow->site_wid = curRow->site_spa = SITE_SPA = siteX;
   }
-  PrintInfoPrecPair( "RowSize", SITE_SPA, rowHeight);
-  PrintInfoInt("NumRows", row_cnt);
-  PrintProcEnd("Generate Rows");
+//  PrintInfoPrecPair( "RowSize", SITE_SPA, rowHeight);
+//  PrintInfoInt("NumRows", row_cnt);
+//  PrintProcEnd("Generate Rows");
 }
 
 void GenerateDummyCellDb(dbSet<dbRow> &rows) {
@@ -616,7 +630,6 @@ void GenerateDummyCellDb(dbSet<dbRow> &rows) {
       }
     }
   }
-  PrintInfoInt("Inserted Dummy Terms", dummyTermStor_.size());
 
   // termCnt Updates 
   int prevCnt = terminalCNT;
@@ -628,6 +641,7 @@ void GenerateDummyCellDb(dbSet<dbRow> &rows) {
   for(int i=prevCnt; i<terminalCNT; i++) {
     terminalInstance[i] = dummyTermStor_[i - prevCnt];
   }
+  PrintInfoInt("NumDummyInstances", dummyTermStor_.size());
 }
 
 adsRect GetDieFromDb(dbBox* bBox, bool isScaleDown) {
