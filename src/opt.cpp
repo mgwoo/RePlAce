@@ -265,9 +265,9 @@ void whitespace_init(void) {
 
   PrintInfoPrec("CoreArea", total_PL_area);
   PrintInfoPrec("NonPlaceInstsArea", total_termPL_area);
-  PrintInfoPrec("TotalWhiteSpaceArea", total_WS_area);
-  PrintInfoPrec("TotalPlaceMacrosArea", total_macro_area);
-  PrintInfoPrec("TotalPlaceStdCellsArea", total_std_area); 
+//  PrintInfoPrec("TotalWhiteSpaceArea", total_WS_area);
+//  PrintInfoPrec("TotalPlaceMacrosArea", total_macro_area);
+  PrintInfoPrec("PlaceInstsArea", total_std_area); 
   PrintInfoPrec("Util(%)", (total_macro_area + total_std_area) / total_PL_area * 100);
 
   if( (total_macro_area + total_std_area)/total_PL_area > 1.00f ) {
@@ -376,9 +376,9 @@ void cell_filler_init() {
   memcpy(gcell_st, gcell_st_tmp, gcell_cnt * (sizeof(struct CELL)));
   free(gcell_st_tmp);
 
-  PrintInfoInt("FillerInit: NumCells", gcell_cnt);
-  PrintInfoInt("FillerInit: NumModules", moduleCNT);
-  PrintInfoInt("FillerInit: NumFillers", gfiller_cnt);
+  PrintInfoInt("FillerInit: NumGCells", gcell_cnt);
+  PrintInfoInt("FillerInit: NumGNets", netCNT);
+  PrintInfoInt("FillerInit: NumGPins", pinCNT);
 
   for(i = moduleCNT; i < gcell_cnt; i++) {
     filler = &gcell_st[i];
@@ -974,9 +974,6 @@ void msh_init() {
   msh = dim_bin;
   msh_yz = msh.y;
   int d_msh = msh.x * msh.y;
-
-  printf("INFO:  D_MSH = %d \n", d_msh);
-  printf("INFO:  MSH(X, Y) = (%d, %d)\n", msh.x, msh.y);
 }
 
 // void stepSizeAdaptation_by1stOrderEPs (prec   curr_hpwl) {

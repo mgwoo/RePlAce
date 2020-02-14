@@ -249,6 +249,9 @@ void bin_init() {
 //
 //
 void bin_init_2D(int STAGE) {
+
+  PrintInfoPrec("TargetDensity", target_cell_den);
+
   if(STAGE == cGP2D) {
     dim_bin_cGP2D.x = dim_bin_cGP2D.y = 0;
   }
@@ -261,6 +264,11 @@ void bin_init_2D(int STAGE) {
     prec avg_modu_area = 1.0 * tier->modu_area / tier->modu_cnt;
     prec ideal_bin_area = avg_modu_area / target_cell_den;
     int ideal_bin_cnt = INT_CONVERT(tier->area / ideal_bin_area);
+
+    PrintInfoPrec("AveragePlaceInstArea", avg_modu_area);
+    PrintInfoPrec("IdealBinArea", ideal_bin_area);
+    PrintInfoInt("IdealBinCnt", ideal_bin_cnt);
+    PrintInfoPrec("TotalBinArea", tier->area);
 
     bool isUpdate = false;
     for(int i = 1; i <= 10; i++) {
@@ -311,8 +319,7 @@ void bin_init_2D(int STAGE) {
     //}
     bin_stp_mGP2D.x = place.cnt.x / (prec)dim_bin_mGP2D.x;
     bin_stp_mGP2D.y = place.cnt.y / (prec)dim_bin_mGP2D.y;
-    printf("INFO:  dim_bin_mGP2D.(x,y) = (%d, %d)\n", dim_bin_mGP2D.x,
-           dim_bin_mGP2D.y);
+    PrintInfoIntPair( "BinCnt", dim_bin_mGP2D.x, dim_bin_mGP2D.y );
   }
   else if(STAGE == cGP2D) {
     // LW 05/30/17
@@ -326,8 +333,7 @@ void bin_init_2D(int STAGE) {
     bin_stp_cGP2D.x = place.cnt.x / (prec)dim_bin_cGP2D.x;
     bin_stp_cGP2D.y = place.cnt.y / (prec)dim_bin_cGP2D.y;
 
-    printf("INFO:  dim_bin_cGP2D.(x,y) = (%d, %d)\n", dim_bin_cGP2D.x,
-           dim_bin_cGP2D.y);
+    PrintInfoIntPair( "BinCnt", dim_bin_cGP2D.x, dim_bin_cGP2D.y );
   }
 
   bin_mat_st = (BIN **)malloc(sizeof(BIN *) * numLayer);
@@ -345,6 +351,8 @@ void bin_init_2D(int STAGE) {
 
     tier->bin_stp.x = tier->size.x / tier->dim_bin.x;
     tier->bin_stp.y = tier->size.y / tier->dim_bin.y;
+
+    PrintInfoPrecPair("BinSize", tier->bin_stp.x, tier->bin_stp.y);
 
     tier->half_bin_stp.x = 0.5 * tier->bin_stp.x;
     tier->half_bin_stp.y = 0.5 * tier->bin_stp.y;

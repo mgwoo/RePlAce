@@ -66,7 +66,7 @@ void tier_init_2D(int STAGE) {
     tier->cell_cnt = 0;
   }
 
-  PrintInfoInt("TierInit: NumModules", tier->modu_cnt, 1);
+//  PrintInfoInt("TierInit: NumModules", tier->modu_cnt, 1);
 
   for(i = 0; i < moduleCNT; i++) {
     modu = &moduleInstance[i];
@@ -93,22 +93,22 @@ void tier_init_2D(int STAGE) {
     //            (tier->area - tier->virt_area) * target_cell_den -
     //            tier->modu_area;
 
-    PrintInfoPrec("TierInit: PlaceArea", tier->area, 1);
-    PrintInfoPrec("TierInit: CoreSpacingArea", tier->virt_area, 1);
-    PrintInfoPrec("TierInit: TerminalArea", tier->term_area, 1);
-    PrintInfoPrec("TierInit: ModuleArea", tier->modu_area, 1);
-    PrintInfoPrec("TierInit: FillerArea", tier->filler_area, 1);
+//    PrintInfoPrec("TierInit: PlaceArea", tier->area, 1);
+//    PrintInfoPrec("TierInit: CoreSpacingArea", tier->virt_area, 1);
+//    PrintInfoPrec("TierInit: TerminalArea", tier->term_area, 1);
+//    PrintInfoPrec("TierInit: ModuleArea", tier->modu_area, 1);
+//    PrintInfoPrec("TierInit: FillerArea", tier->filler_area, 1);
 
     tier->filler_cnt = (int)(tier->filler_area / filler_area + 0.5);
 
-    PrintInfoInt("TierInit: NumFillers", tier->filler_cnt, 1);
+//    PrintInfoInt("TierInit: NumFillers", tier->filler_cnt, 1);
 
     max_idx = min_idx + tier->filler_cnt > gcell_cnt
                   ? gcell_cnt
                   : min_idx + tier->filler_cnt;
 
-    PrintInfoInt("TierInit: FillerMinIdx", min_idx, 1);
-    PrintInfoInt("TierInit: FillerMaxIdx", max_idx, 1);
+//    PrintInfoInt("TierInit: FillerMinIdx", min_idx, 1);
+//    PrintInfoInt("TierInit: FillerMaxIdx", max_idx, 1);
 
     for(i = min_idx; i < max_idx; i++) {
       CELL *filler = &gcell_st[i];
@@ -244,7 +244,7 @@ void tier_assign(int mode) {
     // tier->modu_den = tier->modu_area / tier->ws_area;
     prec moduleDensity = tier->modu_area / tier->ws_area;
 
-    PrintInfoPrec("TierInit: TierUtil", moduleDensity, 1);
+//    PrintInfoPrec("TierInit: TierUtil", moduleDensity, 1);
   }
 //  cout << "Final module count: " << tier->modu_cnt << endl;
 //  exit(1);
