@@ -225,16 +225,7 @@ void whitespace_init(void) {
         curTerminal->PL_area += commonArea;
         total_termPL_area += commonArea;
         tier->term_area += commonArea;
-
-        //                if( string(curTerminal->name) == "o859970" ) {
-        //                    curTerminal->pmin.Dump("term->pmin");
-        //                    curTerminal->pmax.Dump("term->pmax");
-        //                    pl->org.Dump("pl->org");
-        //                    pl->end.Dump("pl->end");
-        //                }
       }
-      //            cout << fixed <<setprecision(4) <<curTerminal->name << " : "
-      //            << total_termPL_area << endl;
 //    }
     // there are shapes
 //    else {
@@ -460,8 +451,6 @@ void cell_init(void) {
   avg80p_cell_area = avg_cell_area;
   avg80p_cell_dim.x = avg_cell_x;
   avg80p_cell_dim.y = avg_cell_y;
-
-  PrintInfoPrec("80pCellArea", avg80p_cell_area);
 
   gcell_cnt = moduleCNT;
   gcell_st = (struct CELL *)malloc(sizeof(struct CELL) * gcell_cnt);
@@ -759,16 +748,6 @@ void gp_opt(void) {
 //    WriteBookshelf(); 
 //  }
 
-  printf("PROC:  Start NESTEROV's Optimization\n");
-  if(constraintDrivenCMD == false) {
-    printf("PROC:    Global Lagrangian Multiplier is Applied\n");
-  }
-  else if(constraintDrivenCMD == true) {
-    printf(
-        "PROC:    Both Global and Local Lagrangian Multipliers are "
-        "Applied\n");
-  }
-    
   ns_opt.nesterov_opt();
   UpdateModuleCoordiFromGcell();
   fflush(stdout);
@@ -906,10 +885,6 @@ void cell_init_2D(void) {
   struct CELL *cell = NULL;
   struct TIER *tier = &tier_st[0];
   struct FPOS scal;
-
-  cout << "cell Init 2D:" << endl;
-  tier->bin_stp.Dump("tier->bin_stp");
-  tier->half_bin_stp.Dump("tier->half_bin_stp");
 
   // normal cases
   // SQRT2 = smoothing parameter for density_size calculation

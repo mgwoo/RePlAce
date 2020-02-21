@@ -173,8 +173,7 @@ void wcof_init(FPOS bstp) {
   base_wcof.x = wcof00.x / (0.5 * (bstp.x + bstp.y));
   base_wcof.y = wcof00.y / (0.5 * (bstp.x + bstp.y));
 
-  wlen_cof = fp_scal(0.1, base_wcof);
-//  wlen_cof = base_wcof;
+  wlen_cof = base_wcof;
   wlen_cof_inv = fp_inv(wlen_cof);
 }
 
@@ -289,13 +288,7 @@ prec GetHpwl() {
 
     total_hpwl.x += curNet->max_x - curNet->min_x;
     total_hpwl.y += curNet->max_y - curNet->min_y;
-
-    //// lutong
-    // total_stnwl.x += curNet->stn_cof * (curNet->max_x - curNet->min_x) ;
-    // total_stnwl.y += curNet->stn_cof * (curNet->max_y - curNet->min_y) ;
-
   }
-
   return total_hpwl.x + total_hpwl.y;
 }
 

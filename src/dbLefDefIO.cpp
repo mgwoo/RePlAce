@@ -298,6 +298,28 @@ void FillReplaceTerm(dbSet<dbInst> &insts, dbSet<dbBTerm> &bterms) {
   assert(i == terminalCNT);
 }
 
+
+static FPOS GetOffsetFromDb(dbITerm* iTerm) {
+  int instCenterX = iTerm->getInst()->getMaster()->getWidth()/2;
+  int instCenterY = iTerm->getInst()->getMaster()->getHeight()/2;
+
+  int offsetLx = INT_MAX, offsetLy = INT_MAX;
+  int offsetUx = INT_MIN, offsetUy = INT_MIN;
+
+  for(odb::dbMPin* mPin : iTerm->getMTerm()->getMPins()) {
+    for(odb::dbBox* box : mPin->getGeometry()) {
+      offsetLx = std::min(box->xMin(), offsetLx);
+      offsetLy = std::min(box->yMin(), offsetLy);
+      offsetUx = std::max(box->xMax(), offsetUx);
+      offsetUy = std::max(box->yMax(), offsetUy);
+    }
+  }
+
+  return FPOS( (offsetLx + offsetUx)/2 - instCenterX, 
+      (offsetLy + offsetUy)/2 - instCenterY);
+
+}
+
 void FillReplaceNet(dbSet<dbNet> &nets) {
  
   pinCNT = 0;
@@ -414,8 +436,8 @@ void FillReplaceNet(dbSet<dbNet> &nets) {
         mPinName[mtPtr->second.second].push_back( 
             curITerm->getMTerm()->getConstName() );
 
-        // temporary
-        FPOS curOffset;
+        
+        FPOS curOffset = GetOffsetFromDb(curITerm);
 
         AddPinInfoForModuleAndTerminal( 
             &curModule->pin, &curModule->pof, 
@@ -431,7 +453,7 @@ void FillReplaceNet(dbSet<dbNet> &nets) {
             curITerm->getMTerm()->getConstName() ); 
 
         // temporary
-        FPOS curOffset;
+        FPOS curOffset = GetOffsetFromDb(curITerm);
 
         AddPinInfoForModuleAndTerminal(
             &curTerm->pin, &curTerm->pof,

@@ -66,6 +66,7 @@ static int backtrack_cnt = 0;
 sta::dbSta* Timing::_sta = nullptr;
 
 void myNesterov::nesterov_opt() {
+  PrintProcBegin("NesterovInit",3);
   int last_iter = 0;
 
   Timing::Timing TimingInst(moduleInstance, terminalInstance, netInstance,
@@ -144,6 +145,10 @@ void myNesterov::nesterov_opt() {
 
   // if (dynamicStepCMD) NUM_ITER_FILLER_PLACE = 20;
   // else                NUM_ITER_FILLER_PLACE = 20;
+  
+  PrintInfoPrecSignificant("InitialStepLength", it->alpha00);
+
+  PrintProcEnd("NesterovInit",3);
 
   last_iter = DoNesterovOptimization(TimingInst);
 
@@ -339,7 +344,6 @@ void myNesterov::InitializationCellStatus() {
 
 void myNesterov::InitializationCoefficients() {
 
-  cout << "BaseWireLengthCoef: " << base_wcof.x << endl;
 
   if(STAGE == mGP3D) {
     opt_phi_cof = sum_wgrad / sum_pgrad * INIT_LAMBDA_COF_GP;
@@ -540,6 +544,16 @@ void myNesterov::InitializationIter() {
   it->potn = gsum_phi;
   it->ovfl = gsum_ovfl;
   it->grad = get_norm(y_dst, N, 2.0);
+
+  PrintInfoPrecSignificant("InitialHPWL", GetHpwl(), 3); 
+  PrintInfoPrecSignificant("BaseWireLengthCoef", base_wcof.x, 3);
+  PrintInfoPrecSignificant("InitSumOverflow", gsum_ovfl, 3);
+  PrintInfoPrecSignificant("  NewWireLengthCoef", wlen_cof.x, 3);
+  PrintInfoPrecSignificant("WireLengthCoef", wlen_cof.x, 3);
+  
+  PrintInfoPrecSignificant("  DensityPenalty", 0);
+  PrintInfoPrecSignificant("  WireLengthGradSum", sum_wgrad);
+  PrintInfoPrecSignificant("  DensityGradSum", sum_pgrad);
 }
 
 int myNesterov::DoNesterovOptimization(Timing::Timing &TimingInst) {
@@ -556,7 +570,7 @@ int myNesterov::DoNesterovOptimization(Timing::Timing &TimingInst) {
     if(timeon)
       time_start(&time);
   
-    cout << "Iter: " << i+1 << endl;  
+    PrintInfoInt("Iter", i+1, 3);
 
     if(isTrial == false && isRoutability == true &&
        isRoutabilityInit == false) {
@@ -633,14 +647,14 @@ int myNesterov::DoNesterovOptimization(Timing::Timing &TimingInst) {
     a = (1.0 + sqrt(4.0 * a * a + 1.0)) * 0.5;
     cof = (ab - 1.0) / a;
 
-    cout << "  PreviousA: " << ab << endl;
-    cout << "  CurrentA: " << a << endl;
-    cout << "  Coefficient: " << cof << endl;
+    PrintInfoPrecSignificant("  PreviousA", ab, 3);
+    PrintInfoPrecSignificant("  CurrentA", a, 3);
+    PrintInfoPrecSignificant("  Coefficient", cof, 3);
 
     alpha_pred = it->alpha00;
     backtrack_cnt = 0;
 
-    cout << "  StepLength: " <<alpha_pred <<endl;
+    PrintInfoPrecSignificant("  StepLength", alpha_pred, 3);
     // cout <<"cof: " <<cof <<endl;
     // int cnt = 0;
     if(timeon) {
@@ -720,7 +734,7 @@ int myNesterov::DoNesterovOptimization(Timing::Timing &TimingInst) {
       }
 
       alpha_new = it0.alpha00;
-      cout << "  NewStepLength: " << alpha_new << endl;
+      PrintInfoPrecSignificant("  NewStepLength", alpha_new, 3);
 
       if(alpha_new > alpha_pred * 0.95 || backtrack_cnt >= MAX_BKTRK_CNT) {
         alpha_pred = alpha_new;
@@ -732,7 +746,7 @@ int myNesterov::DoNesterovOptimization(Timing::Timing &TimingInst) {
       }
     }
 
-    cout << "  NumBackTrak: " << backtrack_cnt << endl;
+    PrintInfoPrecSignificant("  NumBackTrak", backtrack_cnt, 3);
 
     UpdateNesterovOptStatus();
     UpdateNesterovIter(i + 1, it, &iter_st[i]);
@@ -841,8 +855,8 @@ int myNesterov::DoNesterovOptimization(Timing::Timing &TimingInst) {
       UpdateBeta(it);
 
     // Elimination Condition
-    if(it->tot_hpwl > 2000000000)
-      exit(0);
+//    if(it->tot_hpwl > 2000000000)
+//      exit(0);
 
     if(isTiming) {
       int checkIter = INT_CONVERT(it->ovfl * 100);
@@ -930,21 +944,12 @@ void myNesterov::SummarizeNesterovOpt(int last_index) {
   if(STAGE == mGP2D) {
     mGP2D_iterCNT = last_index + 1;
     hpwl_mGP2D = it->tot_hpwl;
-    PrintInfoInt("Nesterov: NumIters", cGP2D_iterCNT, 1);
-    PrintInfoPrec("Nesterov: ScaledHpwl", it->tot_hpwl, 1);
-    PrintInfoPrec("Nesterov: Overflow", it->ovfl, 1);
-    PrintInfoPrec("Nesterov: Potential", it->potn, 1);
     mGP2D_tot_iter = last_index;
     mGP2D_opt_phi_cof = opt_phi_cof;
   }
   else if(STAGE == cGP2D) {
     cGP2D_iterCNT = last_index + 1;
     hpwl_cGP2D = it->tot_hpwl;
-    PrintInfoInt("Nesterov: NumIters", cGP2D_iterCNT, 1);
-    PrintInfoPrec("Nesterov: ScaledHpwl", it->tot_hpwl, 1);
-    PrintInfoPrec("Nesterov: Overflow", it->ovfl, 1);
-    PrintInfoPrec("Nesterov: Potential", it->potn, 1);
-
     cGP2D_tot_iter = last_index;
     cGP2D_opt_phi_cof = opt_phi_cof;
   }
@@ -957,8 +962,6 @@ void myNesterov::SummarizeNesterovOpt(int last_index) {
   net_update(x_st);
   tot_hpwl_x = GetHpwl();
 
-  PrintInfoPrec("Nesterov: xInstScaledHpwl", tot_hpwl_x, 1);
-  PrintInfoPrec("Nesterov: yInstScaledHpwl", tot_hpwl_y, 1);
 }
 
 void getCostFuncGradient3(struct FPOS *dst, struct FPOS *wdst,
@@ -993,7 +996,7 @@ void getCostFuncGradient2(struct FPOS *dst, struct FPOS *wdst,
   float denGradSum = 0;
   float dstSum = 0;
 
-  cout << "  DensityPenalty: " << opt_phi_cof << endl;
+  PrintInfoPrecSignificant("  DensityPenalty", opt_phi_cof, 3);
   int i = 0;
 #pragma omp parallel default(none) private(i)                              \
     shared(N, cellLambdaArr, gcell_st, dampParam, STAGE, pdstl, dst, wdst, \
@@ -1086,10 +1089,9 @@ void getCostFuncGradient2(struct FPOS *dst, struct FPOS *wdst,
       dstSum += fabs(dst[i].x) + fabs(dst[i].y);
     }
   }
-
-  cout << "  WireLengthGradSum: " << wlenGradSum << endl;
-  cout << "  DensityGradSum: " << denGradSum << endl;
-  cout << "  GradSum: " << dstSum << endl;
+  PrintInfoPrecSignificant("  WireLengthGradSum", wlenGradSum, 3);
+  PrintInfoPrecSignificant("  DensityGradSum", denGradSum, 3);
+  PrintInfoPrecSignificant("  GradSum", dstSum, 3);
 
 }
 void getCostFuncGradient2_DEN_ONLY_PRECON(struct FPOS *dst, struct FPOS *wdst,
@@ -1335,11 +1337,14 @@ void myNesterov::z_init() {
   FPOS half_densize;
   prec zx = 0.0f, zy = 0.0f;
 
+  float initialPrevCoordiUpdateCoef = 100; 
+//  float initialPrevCoordiUpdateCoef = 0.01; 
+
   for(int j = start_idx; j < end_idx; j++) {
     half_densize = gcell_st[j].half_den_size;
 
-    zx = y_st[j].x + z_ref_alpha * y_dst[j].x;
-    zy = y_st[j].y + z_ref_alpha * y_dst[j].y;
+    zx = y_st[j].x + initialPrevCoordiUpdateCoef * y_dst[j].x;
+    zy = y_st[j].y + initialPrevCoordiUpdateCoef * y_dst[j].y;
 
     z_st[j].x = GetCoordiLayoutInsideAxis(zx, half_densize.x, 0);
     z_st[j].y = GetCoordiLayoutInsideAxis(zy, half_densize.y, 1);
@@ -1383,6 +1388,8 @@ void myNesterov::UpdateNesterovIter(int iter, struct ITER *it,
   it->ovfl = gsum_ovfl;
   it->dis00 = get_dis(z_st, y_st, N);
   it->wcof = get_wlen_cof(it->ovfl);
+  PrintInfoPrec("  NewWireLengthCoef", it->wcof.x, 3);
+  
   wlen_cof = fp_mul(base_wcof, it->wcof);
   wlen_cof_inv = fp_inv(wlen_cof);
   pcofArr[iter % 100] = opt_phi_cof;
@@ -1469,13 +1476,14 @@ void myNesterov::UpdateNesterovIter(int iter, struct ITER *it,
   time_calc(last_it->cpu_curr, &it->cpu_curr, &it->cpu_cost);
   PrintNesterovOptStatus(iter);
   fflush(stdout);
-  cout << "  Gradient: " << it->grad << endl;
-  cout << "  Phi: " << it->potn << endl;
-  cout << "  Overflow: " << it->ovfl << endl;
-  cout << "  NewWireLengthCoef: " << wlen_cof.x << endl;
-  cout << "  PreviousHPWL: " << last_it->tot_hpwl * GetUnitX()  << endl;
-  cout << "  NewHPWL: " << it->tot_hpwl * GetUnitX()<< endl;
-  cout << "  PhiCoef: " << it->pcof << endl << endl << endl; 
+
+  PrintInfoPrecSignificant("  Gradient", it->grad, 3);
+  PrintInfoPrecSignificant("  Phi", it->potn, 3);
+  PrintInfoPrecSignificant("  Overflow", it->ovfl, 3);
+  PrintInfoPrecSignificant("  NewWireLengthCoef", wlen_cof.x, 3);
+  PrintInfoPrecSignificant("  PreviousHPWL", last_it->tot_hpwl, 3);
+  PrintInfoPrecSignificant("  NewHPWL", it->tot_hpwl, 3);
+  PrintInfoPrecSignificant("  PhiCoef", it->pcof, 3);
 }
 
 void get_lc(struct FPOS *y_st, struct FPOS *y_dst, struct FPOS *z_st,
@@ -1499,8 +1507,8 @@ void get_lc3(struct FPOS *y_st, struct FPOS *y_dst, struct FPOS *z_st,
 
   lc = yz_dnm / yz_dis;
   // cout <<"N: " <<N <<endl;
-  cout << "  CoordinateDistance: " << yz_dis << endl;
-  cout << "  GradientDistance: " << yz_dnm << endl;
+  PrintInfoPrecSignificant("  CoordinateDistance", yz_dis, 3);
+  PrintInfoPrecSignificant("  GradientDistance", yz_dnm, 3);
 
   alpha = 1.0 / lc;
   iter->lc = lc;
@@ -1530,6 +1538,7 @@ void get_lc3_filler(struct FPOS *y_st, struct FPOS *y_dst, struct FPOS *z_st,
 // y_pdst : density-gradient value
 void myNesterov::InitializationCostFunctionGradient(prec *sum_wgrad0,
                                                     prec *sum_pgrad0) {
+
   prec tmp_sum_wgrad = 0;
   prec tmp_sum_pgrad = 0;
   struct FPOS wgrad;
@@ -1589,6 +1598,7 @@ void myNesterov::InitializationCostFunctionGradient(prec *sum_wgrad0,
   }
   *sum_wgrad0 = tmp_sum_wgrad;
   *sum_pgrad0 = tmp_sum_pgrad;
+  
 }
 
 void myNesterov::ShiftPL_SA(struct FPOS *y_st, int N) {

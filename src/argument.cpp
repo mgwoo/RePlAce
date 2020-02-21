@@ -65,7 +65,8 @@ void initGlobalVars() {
   dim_bin.x = dim_bin.y = 32;
   UPPER_PCOF = 1.05;
   LOWER_PCOF = 0.95;
-  refDeltaWL = 346000;
+//  refDeltaWL = 346000;
+  refDeltaWL = 446000000;
   INIT_LAMBDA_COF_GP = PREC_MIN;
 
   racntiCMD = "10";         // lutong
@@ -151,7 +152,7 @@ void initGlobalVarsAfterParse() {
                        : overflowMin;
   
   INIT_LAMBDA_COF_GP = (INIT_LAMBDA_COF_GP == PREC_MIN)? 
-    ((isRoutability)? 0.001 : 0.00008) : INIT_LAMBDA_COF_GP ;
+    ((isRoutability)? 0.001 : 0.0001) : INIT_LAMBDA_COF_GP ;
 
   numInitPlaceIter = (isRoutability)? 1 : 30;
 

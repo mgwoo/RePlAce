@@ -500,7 +500,7 @@ void init() {
   // see: wlen.cpp: wcof_init function also
   //
   // wcof00.x = wcof00.y = 0.125; 
-  wcof00.x = wcof00.y = 1.00; 
+  wcof00.x = wcof00.y = 0.25; 
 
   SetMAX_EXP_wlen();
 

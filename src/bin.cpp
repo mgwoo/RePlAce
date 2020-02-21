@@ -353,6 +353,7 @@ void bin_init_2D(int STAGE) {
     tier->bin_stp.y = tier->size.y / tier->dim_bin.y;
 
     PrintInfoPrecPair("BinSize", tier->bin_stp.x, tier->bin_stp.y);
+    PrintInfoInt("NumBins", tier->tot_bin_cnt);
 
     tier->half_bin_stp.x = 0.5 * tier->bin_stp.x;
     tier->half_bin_stp.y = 0.5 * tier->bin_stp.y;
@@ -451,6 +452,7 @@ void bin_init_2D(int STAGE) {
 //    }
   }
 
+
   if(STAGE == cGP2D) {
     // for each macro cell
     for(int i = 0; i < macro_cnt; i++) {
@@ -504,7 +506,8 @@ void UpdateTerminalArea(TIER *tier, FPOS *pmin, FPOS *pmax) {
         prec terminalOverlap =
             pGetCommonAreaXY(rect.pmin, rect.pmax, curBin->pmin, curBin->pmax);
 
-        curBin->term_area += terminalOverlap * global_macro_area_scale;
+//        curBin->term_area += terminalOverlap * global_macro_area_scale;
+        curBin->term_area += terminalOverlap;
       }
     }
   }
@@ -992,31 +995,39 @@ void bin_update7_cGP2D() {
     time_start(&time);
   }
 
-#pragma omp parallel default(none) shared(tier) private(i)
-  {
-#pragma omp for
-    for(i = 0; i < tier->tot_bin_cnt; i++) {
-      BIN *bp = &tier->bin_mat[i];
+//  float totalFillerArea = 0;
+//  float totalStdCellArea = 0;
+//  float totalFixedInstArea = 0;
+//  float totalVirtualArea = 0;
 
-      // SUM of (normalCell + un-placeable area) of areas per a bin
-      // note that un-placeable area (virt_area + term_area) already multiplied by target_cell_den;
-      //
-      prec area_num2 = bp->cell_area + bp->virt_area + bp->term_area;
+  for(i = 0; i < tier->tot_bin_cnt; i++) {
+    BIN *bp = &tier->bin_mat[i];
 
-      // SUM of all consumed area (fillerCell + normalCell  + un-placeable area) per a bin.
-      // note that un-placeable area (virt_area + term_area) already multiplied by target_cell_den;
-      //
-      prec area_num = area_num2 + bp->cell_area2;
+    // SUM of (normalCell + un-placeable area) of areas per a bin
+    prec area_num2 = bp->cell_area + bp->virt_area + bp->term_area;
 
-      // all consumed area / binArea
-      bp->den = area_num * tier->inv_bin_area;
-      
-      // (normalCell + un-placecable area) / binArea
-      bp->den2 = area_num2 * tier->inv_bin_area;
+    // SUM of all consumed area (fillerCell + normalCell  + un-placeable area) per a bin.
+    prec area_num = area_num2 + bp->cell_area2;
 
-      copy_den_to_fft_2D(bp->den, bp->p);
-    }
+    // all consumed area / binArea
+    bp->den = area_num / (tier->bin_area * target_cell_den);
+    
+    // (normalCell + un-placecable area) / binArea
+    bp->den2 = area_num2 / (tier->bin_area); 
+
+    copy_den_to_fft_2D(bp->den, bp->p);
+
+//    totalFillerArea += bp->cell_area2;
+//    totalStdCellArea += bp->cell_area;
+//    totalFixedInstArea += bp->term_area;
+//    totalVirtualArea += bp->virt_area;
   }
+
+//  PrintInfoPrecSignificant("BinFillerArea", totalFillerArea);
+//  PrintInfoPrecSignificant("BinStdCellArea", totalStdCellArea);
+//  PrintInfoPrecSignificant("BinFixedInstArea", totalFixedInstArea);
+//  PrintInfoPrecSignificant("BinTotalVirtualArea", totalVirtualArea);
+
   if(timeon) {
     time_end(&time);
     cout << "bin 1st update: " << time << endl;
@@ -1032,21 +1043,11 @@ void bin_update7_cGP2D() {
 
   prec sum_ovf_area = 0;
 
-  float minElectroForce = 1e30;
-  float maxElectroForce = -1e30;
-
   for(i = 0; i < tier->tot_bin_cnt; i++) {
     bp = &tier->bin_mat[i];
 
     copy_e_from_fft_2D(&(bp->e), bp->p);
     copy_phi_from_fft_2D(&(bp->phi), bp->p);
-
-    minElectroForce = std::min(minElectroForce, bp->e.x);
-    minElectroForce = std::min(minElectroForce, bp->e.y);
-
-
-    maxElectroForce = std::max(maxElectroForce, bp->e.x);
-    maxElectroForce = std::max(maxElectroForce, bp->e.y);
 
     gsum_phi += bp->phi * bp->cell_area + bp->phi * bp->cell_area2 +
                 bp->phi * bp->term_area + bp->phi * bp->virt_area;
@@ -1062,9 +1063,6 @@ void bin_update7_cGP2D() {
 
     sum_ovf_area += max((prec)0.0, bp->den2 - target_cell_den) * tier->bin_area;
   }
-
-  cout << "minElectroForce: " << minElectroForce << endl;
-  cout << "maxElectroForce: " << maxElectroForce << endl;
 
   if(timeon) {
     time_end(&time);
