@@ -1,0 +1,63 @@
+Notice 0: Reading LEF file:  ./nangate45.lef
+Notice 0:     Created 22 technology layers
+Notice 0:     Created 27 technology vias
+Notice 0:     Created 134 library cells
+Notice 0: Finished LEF file:  ./nangate45.lef
+Notice 0: 
+Reading DEF file: ./simple02.def
+Notice 0: Design: gcd
+Notice 0:     Created 54 pins.
+Notice 0:     Created 294 components and 1656 component-terminals.
+Notice 0:     Created 364 nets and 1068 connections.
+Notice 0: Finished DEF file: ./simple02.def
+[INFO] DBU = 2000
+[INFO] SiteSize = (380, 2800)
+[INFO] CoreAreaLxLy = (0, 0)
+[INFO] CoreAreaUxUy = (61940, 61600)
+[INFO] NumInstances = 295
+[INFO] NumPlaceInstances = 294
+[INFO] NumFixedInstances = 0
+[INFO] NumDummyInstances = 1
+[INFO] NumNets = 364
+[INFO] NumPins = 1122
+[INFO] DieAreaLxLy = (-140, -140)
+[INFO] DieAreaUxUy = (62070, 61740)
+[INFO] CoreAreaLxLy = (0, 0)
+[INFO] CoreAreaUxUy = (61940, 61600)
+[INFO] CoreArea = 3815504000
+[INFO] NonPlaceInstsArea = 1064000
+[INFO] PlaceInstsArea = 2279088000
+[INFO] Util(%) = 59.748959
+[INFO] StdInstsArea = 2279088000
+[INFO] MacroInstsArea = 0
+[INFO] FillerInit: NumGCells = 295
+[INFO] FillerInit: NumGNets = 364
+[INFO] FillerInit: NumGPins = 1122
+[INFO] TargetDensity = 0.600000
+[INFO] AveragePlaceInstArea = 7752000
+[INFO] IdealBinArea = 12919999
+[INFO] IdealBinCnt = 295
+[INFO] TotalBinArea = 3815504000
+[INFO] BinCnt = (16, 16)
+[INFO] BinSize = (3872, 3850)
+[INFO] NumBins = 256
+[NesterovSolve] Iter: 1 overflow: 0.859229 HPWL: 3710223
+[NesterovSolve] Iter: 10 overflow: 0.64226 HPWL: 4675887
+[NesterovSolve] Iter: 20 overflow: 0.604957 HPWL: 4708779
+[NesterovSolve] Iter: 30 overflow: 0.554826 HPWL: 4795134
+[NesterovSolve] Iter: 40 overflow: 0.49843 HPWL: 4812309
+[NesterovSolve] Iter: 50 overflow: 0.44704 HPWL: 4860877
+[NesterovSolve] Iter: 60 overflow: 0.388898 HPWL: 4862635
+[NesterovSolve] Iter: 70 overflow: 0.33567 HPWL: 4895763
+[NesterovSolve] Iter: 80 overflow: 0.307562 HPWL: 4948859
+[NesterovSolve] Iter: 90 overflow: 0.280456 HPWL: 5001547
+[NesterovSolve] Iter: 100 overflow: 0.244117 HPWL: 5036519
+[NesterovSolve] Iter: 110 overflow: 0.214676 HPWL: 5081729
+[NesterovSolve] Iter: 120 overflow: 0.188638 HPWL: 5132671
+[NesterovSolve] Iter: 130 overflow: 0.158319 HPWL: 5170378
+[NesterovSolve] Iter: 140 overflow: 0.136408 HPWL: 5206267
+[NesterovSolve] Iter: 150 overflow: 0.11531 HPWL: 5236680
+[NesterovSolve] Finished with Overflow: 0.0987775
+Worst slack: 1.00e+30
+Total negative slack: 0.00e+00
+No differences found.
