@@ -145,6 +145,7 @@ PRIVATE
   # in replace -cherry
   ${OPENDB_HOME}/include/opendb
   ${OPENDB_HOME}/include
+  ${DBSTA_HOME}/include
   ${OPENROAD_HOME}/include
   ${TCL_INCLUDE_PATH}
 )
