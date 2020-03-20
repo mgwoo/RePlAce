@@ -9,12 +9,7 @@
 *.rpt
 */**/*.o
 
-bench_**
-output/*
-logdir/*
-evaluation/*
-test/output/*
-test/*.def
+test/results/*
 test/*.dat
 test/*/*.dat
 test/*/output

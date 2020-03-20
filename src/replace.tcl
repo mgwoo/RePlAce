@@ -5,7 +5,8 @@ sta::define_cmd_args "global_placement" {
 
 proc global_placement { args } {
   sta::parse_key_args "global_placement" args \
-    keys {-bin_grid_count -wire_res -wire_cap -density} flags {-skip_initial_place -timing_driven}
+    keys {-bin_grid_count -wire_res -wire_cap -density -init_density_penalty} \
+    flags {-skip_initial_place -timing_driven}
     
   set rep [replace_external]
 
@@ -43,8 +44,8 @@ proc global_placement { args } {
     sta::check_positive_integer "-bin_grid_count" $bin_grid_count
     $rep set_bin_grid_count $bin_grid_count
   }
-  sta::check_argc_eq0 "global_placement" $args
 
+  sta::check_argc_eq0 "global_placement" $args
   if { [ord::db_has_rows] } {
     # Unfortunately this does not really turn off the noise. -cherry
     $rep set_verbose_level 5
@@ -60,10 +61,6 @@ proc global_placement { args } {
     }
     # place_cell with Nesterov method 
     $rep place_cell_nesterov_place
-    
-    puts "HP wire length: [format %.0f [$rep get_hpwl]]"
-    puts "Worst slack: [format %.2e [sta::worst_slack]]"
-    puts "Total negative slack: [format %.2e [sta::total_negative_slack]]"
   } else {
     puts "Error: no rows defined in design. Use initialize_floorplan to add rows."
   }
