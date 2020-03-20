@@ -30,6 +30,7 @@ public:
   void set_output_experiment_name(const char* output);
 
   void set_timing_driven(bool is_true);
+  void set_routability_driven(bool is_true);
   void set_unit_res(double unit_r);
   void set_unit_cap(double unit_c);
 
@@ -94,6 +95,7 @@ private:
   std::string net_weight_file;
   std::string output_loc;
   bool timing_driven_mode;
+  bool routability_driven_mode;
   bool write_bookshelf_mode;
   double unit_r;
   double unit_c;

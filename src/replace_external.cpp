@@ -175,6 +175,11 @@ replace_external::set_timing_driven(bool is_true) {
 }
 
 void
+replace_external::set_routability_driven(bool is_true) {
+  routability_driven_mode = is_true;
+}
+
+void
 replace_external::set_unit_res(double r) {
   unit_r = r;
 }

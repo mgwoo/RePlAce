@@ -5,8 +5,8 @@ sta::define_cmd_args "global_placement" {
 
 proc global_placement { args } {
   sta::parse_key_args "global_placement" args \
-    keys {-bin_grid_count -wire_res -wire_cap -density -init_density_penalty} \
-    flags {-skip_initial_place -timing_driven}
+    keys {-bin_grid_count -wire_res -wire_cap -density -init_density_penalty -verbose} \
+    flags {-skip_initial_place -timing_driven -routability_driven}
     
   set rep [replace_external]
 
@@ -38,17 +38,24 @@ proc global_placement { args } {
   $rep set_unit_cap $wire_cap
 
   $rep set_timing_driven [info exists flags(-timing_driven)]
+  $rep set_routability_driven [info exists flags(-routability_driven)]
 
   if { [info exists keys(-bin_grid_count)] } {
     set bin_grid_count  $keys(-bin_grid_count)
     sta::check_positive_integer "-bin_grid_count" $bin_grid_count
     $rep set_bin_grid_count $bin_grid_count
   }
+  
 
   sta::check_argc_eq0 "global_placement" $args
   if { [ord::db_has_rows] } {
-    # Unfortunately this does not really turn off the noise. -cherry
-    $rep set_verbose_level 5
+
+    if { [info exists keys(-verbose)] } {
+      set verbose_level $keys(-verbose)
+      sta::check_positive_integer "-verbose" $verbose_level
+      $rep set_verbose_level $verbose_level
+    }
+
     # Don't shit all over the file system
     $rep set_output /dev/null
 
