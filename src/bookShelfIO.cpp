@@ -1145,7 +1145,8 @@ void read_routing_file( string routeName ) {
     if(strlen(line) < 3)
       continue;
 
-    if(temp[0] == 'n') {
+    if(temp[0] != '(') {
+      int netIdx = 0;
       sscanf(line, "%s %d%*s", netName, &netIdx);
       flag = true;
       continue;
@@ -1169,8 +1170,14 @@ void read_routing_file( string routeName ) {
         to.y = GetScaleDownPoint(toY);
 //        to.z = toL;
         layer = fromL;
-        curNet= &netInstance[netIdx];
-        curNet->routing_tracks.push_back(ROUTRACK(from, to, layer, netIdx));
+
+        auto nmPtr = netNameMap.find( netName );
+        if( nmPtr == netNameMap.end() ) {
+          cout << "ERROR: Cannot find net: " << netName << " in netNameMap " << endl;
+          exit(1);
+        }
+        curNet= &netInstance[nmPtr->second];
+        curNet->routing_tracks.push_back(ROUTRACK(from, to, layer, nmPtr->second));
 //        curNet->routing_tracks[curNet->routing_tracks.size()-1].Dump();
       }
     }

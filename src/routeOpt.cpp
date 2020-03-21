@@ -876,10 +876,15 @@ void calcCongPerNet_grouter_based(struct NET *net) {
       isV_layer = false;
     }
 
-    b0.x = (int)round((x_min - tier->tile_org.x) * tier->inv_tile_stp.x);
-    b0.y = (int)round((y_min - tier->tile_org.y) * tier->inv_tile_stp.y);
-    b1.x = (int)round((x_max - tier->tile_org.x) * tier->inv_tile_stp.x);
-    b1.y = (int)round((y_max - tier->tile_org.y) * tier->inv_tile_stp.y);
+//    b0.x = (int)round((x_min - tier->tile_org.x) * tier->inv_tile_stp.x);
+//    b0.y = (int)round((y_min - tier->tile_org.y) * tier->inv_tile_stp.y);
+//    b1.x = (int)round((x_max - tier->tile_org.x) * tier->inv_tile_stp.x);
+//    b1.y = (int)round((y_max - tier->tile_org.y) * tier->inv_tile_stp.y);
+    
+    b0.x = (int)((x_min - tier->tile_org.x) * tier->inv_tile_stp.x);
+    b0.y = (int)((y_min - tier->tile_org.y) * tier->inv_tile_stp.y);
+    b1.x = (int)((x_max - tier->tile_org.x) * tier->inv_tile_stp.x);
+    b1.y = (int)((y_max - tier->tile_org.y) * tier->inv_tile_stp.y);
 
     // if (isH_layer) {
     //    bm1.x = (int)((x_min - tier->tile_stp.x - tier->tile_org.x) *
@@ -1646,6 +1651,23 @@ void calcInflationRatio_foreachTile() {
   v_max_inflation_ratio = temp_v_max_inflation_ratio;
   cout << "hv_inflation_ratio = " << h_max_inflation_ratio << ", "
        << v_max_inflation_ratio << endl;
+  
+
+  for(int j = 0; j <= bmax.y; j++) {
+    for(int i = 0; i <= bmax.x; i++) {
+      auto idx = i * tier->dim_tile.y + j;
+      bp = &tier->tile_mat[idx];
+  
+      PrintInfoIntPair("xy", i, j);
+      PrintInfoIntPair("minxy", bp->pmin.x, bp->pmin.y);
+      PrintInfoIntPair("maxxy", bp->pmax.x, bp->pmax.y);
+      PrintInfoPrecPair("usageHV", bp->h_usage, bp->v_usage);
+      PrintInfoPrecPair("supplyHV", bp->h_supply, bp->v_supply);
+      PrintInfoInt("pinCnt", bp->pincnt); 
+      PrintInfoPrecPair("calcInflRatioHV", bp->h_inflation_ratio, bp->v_inflation_ratio);
+      cout << endl;
+    }
+  }
 
   // new
   for(int i = 0; i < tier->tot_tile_cnt; i++) {
