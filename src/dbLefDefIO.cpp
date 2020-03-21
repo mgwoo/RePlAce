@@ -292,6 +292,7 @@ void FillReplaceTerm(dbSet<dbInst> &insts, dbSet<dbBTerm> &bterms) {
     curTerm->center.Set(curTerm->pmin);
 
     moduleTermMap[ bTerm->getConstName() ] = make_pair(false, i);
+    terminalNameStor.push_back( bTerm->getConstName() );
     i++;
   } 
 

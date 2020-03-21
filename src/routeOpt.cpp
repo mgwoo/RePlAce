@@ -563,8 +563,6 @@ void congEstimation(struct FPOS *st) {
     // est_congest_global_router(dir, resultPlName);
     //
     
-    cout << "reading route file" << endl;
-    read_routes_3D("/home/mgwoo/prev_replace/OpenROAD/src/replace/test/input.route");
   
     cout << "reading est file" << endl;
     read_routing_file("/home/mgwoo/prev_replace/OpenROAD/src/replace/test/out.guide.est");

@@ -53,6 +53,7 @@
 #include "opt.h"
 #include "plot.h"
 #include "wlen.h"
+#include "bookShelfIO.h"
 
 using std::to_string;
 using namespace std;
@@ -123,18 +124,11 @@ int setup_before_opt_cGP2D(void) {
   bin_init_2D(cGP2D);
 
   // routability
-//  if( isRoutability ) {
-//    routeInst.Init();
-//    WriteBookshelfForGR();
-
-//    char routeLoc[BUF_SZ] = {0, };
-//    sprintf(routeLoc, "%s/router_base/%s.route", dir_bnd, gbch);
-
-//    if(isRoutability == true) {
-//      read_routes_3D( routeLoc );
-//      tile_init_cGP2D(); 
-//    }
-//  }
+  if( isRoutability ) {
+    cout << "reading route file" << endl;
+    read_routes_3D("/home/mgwoo/prev_replace/OpenROAD/src/replace/test/input.route");
+    tile_init_cGP2D(); 
+  }
 
   charge_fft_init(dim_bin_cGP2D, bin_stp_cGP2D, 0);
   wcof_init(bin_stp_cGP2D);
