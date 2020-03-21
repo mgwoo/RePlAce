@@ -77,6 +77,7 @@ set (REPLACE_SRC
   src/replace_private.cpp
   src/dbLefDefIO.cpp
   src/MakeReplace.cpp
+  src/bookShelfIO.cpp
   ${REPLACE_WRAP}
   ${REPLACE_TCL_INIT}
   )

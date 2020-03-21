@@ -10,7 +10,7 @@ proc global_placement { args } {
     
   set rep [replace_external]
 
-  set target_density 0.8
+  set target_density 0.7
   if { [info exists keys(-density)] } {
     set target_density $keys(-density) 
     sta::check_positive_float "-density" $target_density
@@ -57,7 +57,7 @@ proc global_placement { args } {
     }
 
     # Don't shit all over the file system
-    $rep set_output /dev/null
+    $rep set_output "/home/mgwoo/prev_replace/OpenROAD/src/replace/test" 
 
     # Initialize RePlAce
     $rep init_replace

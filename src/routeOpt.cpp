@@ -54,6 +54,7 @@
 #include "fft.h"
 #include "wlen.h"
 #include "routeOpt.h"
+#include "bookShelfIO.h"
 
 // global variable due to weird structure
 using namespace std;
@@ -343,12 +344,9 @@ void RouteInstance::FillForReducedTrackStor() {
 }
 */
 
-void est_congest_global_router(char *dir, string plName) {
-  run_global_router(dir, plName);
-  
-//  string routeName = string(dir) + "/" + string(gbch) + ".est";
-//  read_routing_file(routeName);
-}
+//void est_congest_global_router(char *dir, string plName) {
+//  run_global_router(dir, plName);
+//}
 
 void get_intermediate_pl_sol(char *dir, string plName) {
 //  output_tier_pl_global_router(plName.c_str(), 0, true);
@@ -534,35 +532,42 @@ void congEstimation(struct FPOS *st) {
     cout << "INFO:  Your congestion est. method is based on global router "
             "(NCTUgr)."
          << endl;
-    for(inflation_index = 0; inflation_index < 100; inflation_index++) {
-      sprintf(dir, "%s/router/tier%d/inflation_iter%d", dir_bnd, 0,
-              inflation_index);
-      struct stat infl;
-      if(stat(dir, &infl) < 0)
-        break;
-    }
+
+//    for(inflation_index = 0; inflation_index < 100; inflation_index++) {
+//      sprintf(dir, "%s/router/tier%d/inflation_iter%d", dir_bnd, 0,
+//              inflation_index);
+//      struct stat infl;
+//      if(stat(dir, &infl) < 0)
+//        break;
+//    }
 
 
-    /*
     // directory create
-    string command = "mkdir -p " + string(dir);
-    system(command.c_str());
+//    string command = "mkdir -p " + string(dir);
+//    system(command.c_str());
    
-    string plName = string(dir) + "/" + string(gbch) + ".pl";
-    get_intermediate_pl_sol(dir, plName);
-
-    plName = string(gbch) + ".pl";
-    string auxName = string(gbch) + ".aux";
-    CallNtuPlacer4h(dir, auxName.c_str(), plName.c_str());
+//    string plName = string(dir) + "/" + string(gbch) + ".pl";
+//    get_intermediate_pl_sol(dir, plName);
+//
+//    plName = string(gbch) + ".pl";
+//    string auxName = string(gbch) + ".aux";
+//    CallNtuPlacer4h(dir, auxName.c_str(), plName.c_str());
     
-    string resultPlName = string(dir) + "/" + string(gbch) + ".lg.pl";
+//    string resultPlName = string(dir) + "/" + string(gbch) + ".lg.pl";
 //    ReadPl(resultPlName.c_str(), true);
 
-    string defOut = string(dir) + "/" + string(gbch) + ".def";
-    WriteDef( defOut.c_str() );
+    //string defOut = string(dir) + "/" + string(gbch) + ".def";
+    //WriteDef( defOut.c_str() );
     
     // for NCTUgr
-    est_congest_global_router(dir, resultPlName);
+    // est_congest_global_router(dir, resultPlName);
+    //
+    
+    cout << "reading route file" << endl;
+    read_routes_3D("/home/mgwoo/prev_replace/OpenROAD/src/replace/test/input.route");
+  
+    cout << "reading est file" << endl;
+    read_routing_file("/home/mgwoo/prev_replace/OpenROAD/src/replace/test/out.guide.est");
     
     // delete_input_files_in (dir);
     calcCong(st, global_router_based);
@@ -571,7 +576,6 @@ void congEstimation(struct FPOS *st) {
     MergeBlkg2Route();
     calcCong_print();
     clean_routing_tracks_in_net();
-    */
   }
   else {
     cout << "ERROR:  Your congestion est. method is not applicable" << endl;

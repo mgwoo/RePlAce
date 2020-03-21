@@ -290,6 +290,10 @@ replace_external::init_replace() {
     isTiming = true; 
   }
 
+  if( routability_driven_mode == true ) {
+    isRoutability = true;
+  }
+
   initGlobalVarsAfterParse();
   init();
 
