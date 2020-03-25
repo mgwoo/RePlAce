@@ -339,8 +339,8 @@ void tile_init_cGP2D() {
     totNumHTracks +=
         horizontalCapacity[i] / (minWireWidth[i] + minWireSpacing[i]);
   }
-  int h_pitch = tileHeight * 1.0 / totNumHTracks * gRoute_pitch_scal;
-  int v_pitch = tileWidth * 1.0 / totNumVTracks * gRoute_pitch_scal;
+  int h_pitch = static_cast<int>(round(tileHeight * 1.0 / totNumHTracks * gRoute_pitch_scal));
+  int v_pitch = static_cast<int>(round(tileWidth * 1.0 / totNumVTracks * gRoute_pitch_scal));
   tier->tile_stp.x = tileWidth;
   tier->tile_stp.y = tileHeight;
   tier->tile_area = tier->tile_stp.x * tier->tile_stp.y;
@@ -380,7 +380,10 @@ void tile_init_cGP2D() {
     bp->h_supply2 = bp->h_supply;
     bp->v_supply2 = bp->v_supply;
     bp->is_macro_included = false;
+//    cout << " " << p.x << " " << p.y << " " << bp << " newly update h_supply: " << bp->h_supply << endl;
   }
+
+//  cout << "edgeadj_coef: " << edgeadj_coef << endl;
 
   bool is_h = false;
   for(auto &m : edgeCapAdj) {
@@ -414,6 +417,9 @@ void tile_init_cGP2D() {
       bp->h_supply2 -= (horizontalCapacity[lay1 - 1] - cap) /
                        (minWireWidth[lay1 - 1] + minWireSpacing[lay1 - 1]) /
                        edgeadj_coef * tier->tile_stp.x;
+//      cout << "HR " << col1 << " " << row1 << " " << (horizontalCapacity[lay1 - 1] - cap) /
+//                       (minWireWidth[lay1 - 1] + minWireSpacing[lay1 - 1]) /
+//                       edgeadj_coef * tier->tile_stp.x << endl;
       if(lay1 <= 5 && horizontalCapacity[lay1 - 1] > 0 && cap < 0.01) {
         bp->is_macro_included = true;
       }
@@ -422,7 +428,12 @@ void tile_init_cGP2D() {
       bp->v_supply2 -= (verticalCapacity[lay1 - 1] - cap) /
                        (minWireWidth[lay1 - 1] + minWireSpacing[lay1 - 1]) /
                        edgeadj_coef * tier->tile_stp.y;
-      if(lay1 <= 5 && verticalCapacity[lay1 - 1] > 0 && cap < 0.01) {
+      
+//      cout << "VR " << col1 << " " << row1 << " " <<  (verticalCapacity[lay1 - 1] - cap) /
+//                       (minWireWidth[lay1 - 1] + minWireSpacing[lay1 - 1]) /
+//                       edgeadj_coef * tier->tile_stp.y << endl;
+
+        if(lay1 <= 5 && verticalCapacity[lay1 - 1] > 0 && cap < 0.01) {
         bp->is_macro_included = true;
       }
     }
@@ -431,17 +442,33 @@ void tile_init_cGP2D() {
       bp->h_supply -= (horizontalCapacity[lay1 - 1] - cap) /
                       (minWireWidth[lay1 - 1] + minWireSpacing[lay1 - 1]) /
                       edgeadj_coef * tier->tile_stp.x;
+      
+//      cout << "HL " << col2 << " " << row2 << " " <<  (horizontalCapacity[lay1 - 1] - cap) /
+//                      (minWireWidth[lay1 - 1] + minWireSpacing[lay1 - 1]) /
+//                      edgeadj_coef * tier->tile_stp.x << endl;
+
     }
     else {
       bp->v_supply -= (verticalCapacity[lay1 - 1] - cap) /
                       (minWireWidth[lay1 - 1] + minWireSpacing[lay1 - 1]) /
                       edgeadj_coef * tier->tile_stp.y;
+//      cout << "VL " << col2 << " " << row2 << " " << (verticalCapacity[lay1 - 1] - cap) /
+//                      (minWireWidth[lay1 - 1] + minWireSpacing[lay1 - 1]) /
+//                      edgeadj_coef * tier->tile_stp.y << endl;
+
     }
   }
   for(int i = 0; i < tier->tot_tile_cnt; i++) {
+    int x = i / tier->dim_tile.y;
+    int y = i % tier->dim_tile.y;
+    
+    TILE* bp = &tier->tile_mat[i];
+
+//    cout << "set " << x << " " << y << " : " << bp->h_supply << " " << bp->h_supply2 << " " << bp->v_supply << " " << bp->v_supply2 << endl;
     bp->h_supply = min(bp->h_supply, bp->h_supply2);
     bp->v_supply = min(bp->v_supply, bp->v_supply2);
   }
+
 
   std::unordered_map< string, int > tempMap;
   for(int i = 0; i < terminalCNT; ++i) {
@@ -509,6 +536,31 @@ void tile_init_cGP2D() {
   }
 
   tile_init_temp();
+  
+//  for(int i = 0; i < tier->tot_tile_cnt; i++) {
+//    int x = i / tier->dim_tile.y;
+//    int y = i % tier->dim_tile.y;
+//    cout << "final " << &(tier->tile_mat[i]) << " " <<  x << " " << y << " : " << bp->h_supply << " " << bp->v_supply << endl;
+//  }
+ 
+/* 
+  for(int j = 0; j <= tier->dim_tile.y-1; j++) {
+    for(int i = 0; i <= tier->dim_tile.x-1; i++) {
+      auto idx = i * tier->dim_tile.y + j;
+      TILE* bp = &tier->tile_mat[idx];
+  
+      PrintInfoIntPair("END OF TILEINIT xy", i, j);
+      cout << bp << endl;
+      PrintInfoIntPair("minxy", bp->pmin.x, bp->pmin.y);
+      PrintInfoIntPair("maxxy", bp->pmax.x, bp->pmax.y);
+      PrintInfoPrecPair("usageHV", bp->h_usage, bp->v_usage);
+      PrintInfoPrecPair("supplyHV", bp->h_supply, bp->v_supply);
+      PrintInfoInt("pinCnt", bp->pincnt); 
+      PrintInfoPrecPair("calcInflRatioHV", bp->h_inflation_ratio, bp->v_inflation_ratio);
+      cout << endl;
+    }
+  }
+*/
 }
 
 void tile_clear() {

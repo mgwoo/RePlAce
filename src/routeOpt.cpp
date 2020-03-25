@@ -525,6 +525,8 @@ void buildRSMT_FLUTE_PerNet(struct FPOS *st, struct NET *net) {
 void congEstimation(struct FPOS *st) {
   char dir[BUF_SZ];
   int inflation_index;
+  
+  
 
 
 
@@ -925,19 +927,27 @@ void calcCongPerNet_grouter_based(struct NET *net) {
 //    cout << "idx: " << idx << endl;
 //    cout << "tileCnt: " << tier->tot_tile_cnt << endl; 
     bpx = &tier->tile_mat[idx];
-    if(isH_layer)
+    if(isH_layer) {
+//      cout << "HR " << b0.x << " " << b0.y << " " << metLayer << endl;
       bpx->h_gr_usage_per_layer_r[metLayer]++;
-    if(isV_layer)
+    }
+    if(isV_layer) {
+//      cout << "VR " << b0.x << " " << b0.y << " " << metLayer << endl;
       bpx->v_gr_usage_per_layer_r[metLayer]++;
+    }
 
     bpx->route[metLayer] += minWireWidth[metLayer] + minWireSpacing[metLayer];
 
     idx = b1.x * tier->dim_tile.y + b1.y;
     bpx = &tier->tile_mat[idx];
-    if(isH_layer)
+    if(isH_layer) {
+//      cout << "HL " << b1.x << " " << b1.y << " " << metLayer << endl;
       bpx->h_gr_usage_per_layer_l[metLayer]++;
-    if(isV_layer)
+    }
+    if(isV_layer) {
+//      cout << "VL " << b1.x << " " << b1.y << " " << metLayer << endl;
       bpx->v_gr_usage_per_layer_l[metLayer]++;
+    }
     // jdx = bm1.x * tier->dim_tile.y + bm1.y;
     // if (flag) bpy=&tier->tile_mat[jdx];
     // if (isH_layer && flag) bpy->h_gr_usage_per_layer_r[metLayer]++;
@@ -1586,6 +1596,7 @@ void calcInflationRatio_foreachTile() {
   struct TILE *bp_temp = NULL;
   struct POS bmax;
   struct POS b0;
+  
 
   bmax.x = tier->dim_tile.x - 1;
   bmax.y = tier->dim_tile.y - 1;
@@ -1651,14 +1662,15 @@ void calcInflationRatio_foreachTile() {
   v_max_inflation_ratio = temp_v_max_inflation_ratio;
   cout << "hv_inflation_ratio = " << h_max_inflation_ratio << ", "
        << v_max_inflation_ratio << endl;
-  
-
+ 
+ /* 
   for(int j = 0; j <= bmax.y; j++) {
     for(int i = 0; i <= bmax.x; i++) {
       auto idx = i * tier->dim_tile.y + j;
       bp = &tier->tile_mat[idx];
   
       PrintInfoIntPair("xy", i, j);
+      cout << bp << endl;
       PrintInfoIntPair("minxy", bp->pmin.x, bp->pmin.y);
       PrintInfoIntPair("maxxy", bp->pmax.x, bp->pmax.y);
       PrintInfoPrecPair("usageHV", bp->h_usage, bp->v_usage);
@@ -1668,7 +1680,7 @@ void calcInflationRatio_foreachTile() {
       cout << endl;
     }
   }
-
+*/
   // new
   for(int i = 0; i < tier->tot_tile_cnt; i++) {
     bp = &tier->tile_mat[i];
