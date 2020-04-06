@@ -601,14 +601,24 @@ void tile_reset_gr_usages() {
 }
 
 void get_gr_usages_total() {
-  cout << "usage updated!!" << endl;
+//  cout << "usage updated!!" << endl;
   struct TIER *tier = &tier_st[0];
   double temp_h_gr_usage_total;
   double temp_v_gr_usage_total;
   for(int i = 0; i < tier->tot_tile_cnt; i++) {
     temp_h_gr_usage_total = 0;
     temp_v_gr_usage_total = 0;
+    
+    int x = i / tier->dim_tile.y;
+    int y = i % tier->dim_tile.y;
+
     for(int j = 0; j < nMetLayers; j++) {
+//      cout << "final usage " << x << " " << y << " " << j << " " ;
+//      cout << tier->tile_mat[i].h_gr_usage_per_layer_l[j] << " ";
+//      cout << tier->tile_mat[i].h_gr_usage_per_layer_r[j] << " ";
+//      cout << tier->tile_mat[i].v_gr_usage_per_layer_l[j] << " ";
+//      cout << tier->tile_mat[i].v_gr_usage_per_layer_r[j] << endl;
+
       temp_h_gr_usage_total +=
           max((double)tier->tile_mat[i].h_gr_usage_per_layer_l[j],
               (double)tier->tile_mat[i].h_gr_usage_per_layer_r[j]);

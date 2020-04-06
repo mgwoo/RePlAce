@@ -849,6 +849,10 @@ void calcCongPerNet_grouter_based(struct NET *net) {
       ++routrack) {
     metLayer = routrack->layer - 1;
 
+//    cout << "rTrack: " << routrack->from.x << " " << routrack->from.y << " ";
+//    cout << routrack->to.x << " " << routrack->to.y << " " ;
+//    cout << metLayer << endl;
+
     // Horizontal Metal Layer
     if(routrack->from.x == routrack->to.x) {
       if(routrack->from.y < routrack->to.y) {
@@ -1660,27 +1664,10 @@ void calcInflationRatio_foreachTile() {
   }
   h_max_inflation_ratio = temp_h_max_inflation_ratio;
   v_max_inflation_ratio = temp_v_max_inflation_ratio;
-  cout << "hv_inflation_ratio = " << h_max_inflation_ratio << ", "
-       << v_max_inflation_ratio << endl;
- 
- /* 
-  for(int j = 0; j <= bmax.y; j++) {
-    for(int i = 0; i <= bmax.x; i++) {
-      auto idx = i * tier->dim_tile.y + j;
-      bp = &tier->tile_mat[idx];
-  
-      PrintInfoIntPair("xy", i, j);
-      cout << bp << endl;
-      PrintInfoIntPair("minxy", bp->pmin.x, bp->pmin.y);
-      PrintInfoIntPair("maxxy", bp->pmax.x, bp->pmax.y);
-      PrintInfoPrecPair("usageHV", bp->h_usage, bp->v_usage);
-      PrintInfoPrecPair("supplyHV", bp->h_supply, bp->v_supply);
-      PrintInfoInt("pinCnt", bp->pincnt); 
-      PrintInfoPrecPair("calcInflRatioHV", bp->h_inflation_ratio, bp->v_inflation_ratio);
-      cout << endl;
-    }
-  }
-*/
+
+  PrintInfoPrecPair("MaxInflationRatioHV", h_max_inflation_ratio,
+      v_max_inflation_ratio);
+
   // new
   for(int i = 0; i < tier->tot_tile_cnt; i++) {
     bp = &tier->tile_mat[i];
@@ -1691,7 +1678,8 @@ void calcInflationRatio_foreachTile() {
         if(bp->blkg[j] > ignoreEdgeRatio * horizontalCapacity[j]) {
         }
         else {
-          bp->infl_ratio = (prec)max(bp->infl_ratio, bp->route[j] * (prec)1.0 /
+          bp->infl_ratio = (prec)max(bp->infl_ratio, 
+              bp->route[j] * (prec)1.0 /
                                                          horizontalCapacity[j] *
                                                          gRoute_pitch_scal);
         }
@@ -1730,6 +1718,23 @@ void calcInflationRatio_foreachTile() {
     }
     if(bp->infl_ratio > 1.0) {
       bp->infl_ratio = pow(bp->infl_ratio, inflation_ratio_coef);
+    }
+  }
+  
+  for(int j = 0; j <= bmax.y; j++) {
+    for(int i = 0; i <= bmax.x; i++) {
+      auto idx = i * tier->dim_tile.y + j;
+      bp = &tier->tile_mat[idx];
+  
+//      PrintInfoIntPair("xy", i, j);
+//      PrintInfoIntPair("minxy", bp->pmin.x, bp->pmin.y);
+//      PrintInfoIntPair("maxxy", bp->pmax.x, bp->pmax.y);
+//      PrintInfoPrecPair("usageHV", bp->h_usage, bp->v_usage);
+//      PrintInfoPrecPair("supplyHV", bp->h_supply, bp->v_supply);
+//      PrintInfoInt("pinCnt", bp->pincnt); 
+//      PrintInfoPrecPair("calcInflRatioHV", bp->h_inflation_ratio, bp->v_inflation_ratio);
+//      PrintInfoPrec("calcInflationRatio", bp->infl_ratio);
+//      cout << endl;
     }
   }
 }
@@ -1984,6 +1989,9 @@ void bloat_prep() {
   struct TIER *tier = &tier_st[0];
   struct CELL *cell = NULL;
 
+  // 
+  // the following three variables are not used at all????
+  //
   for(int i = 0; i < tier->tot_tile_cnt; i++) {
     bp = &tier->tile_mat[i];
     bp->cell_area_befo_bloating_thisTile = 0;
@@ -2242,6 +2250,9 @@ void dynamicInflationAdjustment() {
   }
 }
 
+// !!
+// NEVER USED!!!!!!
+/*
 void adjust_inflation() {
   calc_Total_inflated_cell_area();
   gen_sort_InflationList();
@@ -2267,7 +2278,9 @@ void adjust_inflation() {
   //                        / total_cell_area);
   ;
 }
+*/
 
+// used in routability()
 void calc_Total_inflate_ratio() {
   calc_Total_inflated_cell_area();
 

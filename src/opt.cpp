@@ -754,16 +754,14 @@ void routability() {
     // mod LW 10/29/16
     global_macro_area_scale = target_cell_den;
 
-    curr_WS_area = total_WS_area - total_cell_area;
     curr_filler_area = total_filler_area;
-    cout << "curr_WS_area = " << curr_WS_area << endl;
-    cout << "total_cell_area = " << total_cell_area << endl;
-    cout << "total_filler_area = " << total_filler_area << endl;
     curr_cell_area = total_cell_area;
   }
 
   bool print = false;
+  int iter = 0;
   while(1) {  // adjust_inflation()
+    cout << "RoutabilityIter: " << iter++ << endl;
     bloat_prep();
     calc_Total_inflated_cell_area();
     gen_sort_InflationList();
@@ -783,8 +781,6 @@ void routability() {
            << endl;
       print = true;
     }
-    // if (currTotalInflation > inflation_area_over_whitespace *
-    // curr_WS_area) {
     if(currTotalInflation >
        inflation_area_over_whitespace *
            (total_WS_area - total_cell_area + total_filler_area)) {
@@ -795,11 +791,14 @@ void routability() {
     }
     else {
       // should be checked xxxxxxxxxxxxxxx
+      cout << "ELSE" << endl;
       print_inflation_list();
       break;
     }
   }
-  cout << "currTotalInflation = " << currTotalInflation << endl;
+
+  PrintInfoPrec("InflatedAreaDelta", currTotalInflation);
+
   curr_cell_area += currTotalInflation;
   target_cell_den = curr_cell_area / total_WS_area;
   // mod LW 10/29/16
@@ -811,18 +810,18 @@ void routability() {
     global_macro_area_scale = target_cell_den;
     shrink_filler_cells(area_to_shrink);
     curr_cell_area = routeMaxDensity * total_WS_area;
-    curr_WS_area = curr_WS_area - (currTotalInflation - area_to_shrink);
   }
-  cout << "DEN_NEW = " << target_cell_den << endl;
-  cout << "curr_WS_area (pure WS)= " << curr_WS_area << endl;
-  cout << "total_cell_area (cell+filler)= " << curr_cell_area << endl;
-  cout << "total_filler_area = " << curr_filler_area << endl;
+
+  PrintInfoPrec("NewDensity", target_cell_den);
+  PrintInfoPrec("WhiteSpaceArea", total_WS_area); 
+  PrintInfoPrec("TotalFillerArea", curr_filler_area);
+  PrintInfoPrec("TotalGCellArea", total_cell_area);
+  PrintInfoPrec("NewTotalGCellArea", curr_cell_area);
   bloating();
   calc_Total_inflate_ratio();
 
-  cout << "\n\nroute opt" << endl;
-  cout << "inflation_cnt = " << inflation_cnt << endl;
-  cout << "bloatCNT = " << bloatCNT << endl;
+  PrintInfoInt("InflationCnt", inflation_cnt);
+  PrintInfoInt("BloatCnt", bloatCNT);
 }
 
 void routability_init() {
@@ -831,6 +830,8 @@ void routability_init() {
   // LW mod 11/17/16
   // inflation_area_over_whitespace = 0.10;
   inflation_area_over_whitespace = 1.0 / inflation_max_cnt;
+  cout << "inflation_max_cnt: " << inflation_max_cnt;
+  cout << "inflation_area_over_white_space: " << inflation_area_over_whitespace << endl;
   for(int i = 0; i < gcell_cnt; i++) {
     cell = &gcell_st[i];
     backup_org_CELL_info(cell);

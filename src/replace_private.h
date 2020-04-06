@@ -678,7 +678,6 @@ extern prec total_PL_area;
 extern prec total_termPL_area;
 extern prec total_WS_area;
 
-extern prec curr_WS_area;  // lutong
 extern prec filler_area;
 extern prec target_cell_den;
 extern prec target_cell_den_orig;  // lutong

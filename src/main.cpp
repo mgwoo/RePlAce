@@ -227,7 +227,6 @@ prec total_filler_area;
 prec total_PL_area;
 prec total_termPL_area;  // mgwoo
 prec total_WS_area;      // mgwoo
-prec curr_WS_area;       // lutong
 prec filler_area;
 prec target_cell_den;
 prec target_cell_den_orig;  // lutong

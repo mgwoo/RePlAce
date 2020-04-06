@@ -806,18 +806,26 @@ int myNesterov::DoNesterovOptimization(Timing::Timing &TimingInst) {
 
       if((it->ovfl < temp_con) && (i - last_ra_iter > 10)) {
         // UPPER_PCOF = 1.01;
+        cout << "temp_con: " << temp_con << endl;
+        cout << "bloatCnt: " <<bloatCNT << " inflCnt: " << inflation_cnt << endl; 
+
         if(bloatCNT < bloating_max_count) {
           last_ra_iter = i;
           cell_update(x_st, N_org);
           UpdateModuleCoordiFromGcell();
           congEstimation(x_st);
           // if (inflation_cnt == 0) calcCong_print_detail();
+          
+
+          // !!!! NEVER USED AT ALL
           if(inflation_cnt % 2 == 0) {
             is_inflation_h = true;
           }
           else {
             is_inflation_h = false;
           }
+
+
           if(flg_noroute) {
             inflation_cnt = 100;
             if(inflation_cnt >= inflation_max_cnt) {
