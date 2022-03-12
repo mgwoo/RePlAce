@@ -1,0 +1,10 @@
+eval
+*.log
+outputs
+ntuplace*
+IBM/*/*.aux
+IBM/*/*.nodes
+IBM/*/*.nets
+IBM/*/*.pl
+IBM/*/*.wts
+IBM/*/*.scl
