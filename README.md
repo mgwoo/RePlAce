@@ -26,7 +26,7 @@ We also provide the modified version of ICCAD04 benchmarks.
 
 ## An example script to run the whole modified ICCAD04 benchmarks (ibm01~ibm18)
     $ pip3 install -r requirements.txt
-    $ ./run.sh
+    $ ./setup_and_run.sh
 
 ## Detailed Binary Usages 
 ### Prerequisite
@@ -36,7 +36,7 @@ We also provide the modified version of ICCAD04 benchmarks.
 4. [NCTUgr.ICCAD12](https://people.cs.nctu.edu.tw/~whliu/NCTU-GR.htm) - Global router - (optional: for the routability driven mode)
 5. [WLCalc-Lnx64.exe](http://vlsicad.eecs.umich.edu/BK/PlaceUtils) - HPWL evaluation
 6. [CongestionMaps-Lnx64.exe](http://vlsicad.eecs.umich.edu/BK/PlaceUtils) - Congestion evaluation
-- Note that [run.sh](run.sh) will download 2, 3, 5, and 6.
+- Note that [setup.sh](setup.sh) will download 2, 3, 5, and 6.
 
 ### Directory Structures
 All binaries should be located as in the following:
