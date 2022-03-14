@@ -94,6 +94,9 @@ Optional parameters:
 - `-DS`: enable dynamic step size adaption mode from TCAD19 paper. No values are required. (flag)
 - `-R`: enable routability-driven mode from TCAD19 paper. No values are required. (flag)
 - `-max_ip_iter`: the number of maximum iterations in the initial placement (BiCGSTAB placer). Default is 30. Allowed values are `[0-MAX_INT, int]`. (Only [RePlAce-static](./RePlAce-static) supports)
+ 
+## RePlAce Results
+<img src="/doc/result_table.png" width=350px>
 
 ## References
 - TCAD19 Paper reference: C.-K. Cheng, A. B. Kahng, I. Kang and L. Wang, "RePlAce: Advancing Solution Quality and Routability Validation in Global Placement", IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems, (2019), pp. 1717-1730. (Digital Object Identifier: 10.1109/TCAD.2018.2859220)
