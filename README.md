@@ -20,9 +20,9 @@ There are two RePlAce binaries in this repo.
 If you need an open-sourced version of RePlAce, please consider using the [OpenROAD integrated RePlAce repo](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/gpl). (more clean C++11 structures).
 
 ## [Modified ICCAD04 Benchmarks](./IBM/)
-We also provide the modified version of ICCAD04 benchmarks.
+We also provide the modified version of [the original ICCAD04 benchmarks](http://vlsicad.eecs.umich.edu/BK/ICCAD04bench/).
 - Periphery pins are moved to the nearest vertical or horizontal location on the edges of the placement area.
-- Locations of the .pl files were zeroed out so that placement tools can start from scratch.
+- Locations of the .pl files are zeroed out so that placement tools can start from scratch.
 
 ## An example script to run the whole modified ICCAD04 benchmarks (ibm01~ibm18)
     $ pip3 install -r requirements.txt
